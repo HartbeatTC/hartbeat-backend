@@ -1,3 +1,6 @@
 node_modules
 .env
 admin.json
+
+hb-test-admin.json
+devSeed
