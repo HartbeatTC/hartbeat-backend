@@ -3,10 +3,15 @@ const app = express();
 import cors from 'cors';
 import { CorsOptions } from 'cors';
 import morgan from 'morgan';
-const admin = require('firebase-admin');
+import apiRoutes from './api';
+
 require('dotenv').config();
 
-const whiteList = [process.env.LOCAL_URL, 'http://localhost:5173'];
+const whiteList = [
+  process.env.LOCAL_URL,
+  'http://localhost:5173',
+  process.env.NGROK_URL,
+];
 const corsOptions: CorsOptions = {
   origin: function (origin, callback) {
     if (whiteList.indexOf(origin) !== -1 || !origin) {
@@ -24,12 +29,7 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const serviceAccount = require('./admin.json');
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-});
-
-app.use('/auth', require('./auth'));
+app.use('/api/v1', apiRoutes);
 
 app.get('/', (req: Request, res: Response) => {
   res.status(401).json({
